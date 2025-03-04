@@ -24,6 +24,22 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Logo Container */
+        .logo-container {
+            position: fixed; 
+            top: 20px;
+            right: 20px; 
+            z-index: 1000;
+        }
+
+        /* Logo Image */
+        .logo {
+            width: 100px; 
+            height: auto;
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
         /* Headings */
         h1 {
             font-size: 2.5rem;
@@ -120,15 +136,29 @@
             h4 {
                 font-size: 1.1rem;
             }
+
+            .logo-container {
+                top: 10px;
+                right: 10px;
+            }
+
+            .logo {
+                width: 80px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <div class="logo-container">
+        <img src="logo.png" alt="BodyBud Logo" class="logo">
+    </div>
+
     <div class="container">
         <h1>Privacy Policy</h1>
         <p>Last updated: March 04, 2025</p>
         <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
-        <p>We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the <a href="https://www.termsfeed.com/privacy-policy-generator/" target="_blank">Privacy Policy Generator</a>.</p>
+        <p>We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.</p>
 
         <h2>Interpretation and Definitions</h2>
         <h3>Interpretation</h3>
