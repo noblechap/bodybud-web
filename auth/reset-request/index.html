@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BodyBud - Reset Password</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input, button { padding: 10px; font-size: 16px; }
+        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .logo { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <h1>BodyBud</h1>
+    </div>
+    
+    <h2>Reset Password</h2>
+    <form id="resetRequestForm">
+        <input type="email" id="email" placeholder="Your account email" required>
+        <button type="submit">Send Reset Link</button>
+    </form>
+    
+    <p>Remember your password? <a href="#" id="loginLink">Login instead</a></p>
+
+    <script>
+        document.getElementById('resetRequestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const button = e.target.querySelector('button');
+            
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            
+            try {
+                const response = await fetch('https://bodybud-production-ee705fe30726.herokuapp.com/api/password-reset/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    alert('Check your email for reset instructions');
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Request failed. Please try again.');
+                }
+            } catch (err) {
+                alert('Network error. Please check your connection.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send Reset Link';
+            }
+        });
+
+        // Update this with your actual login link when available
+        document.getElementById('loginLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Login functionality coming soon!');
+        });
+    </script>
+</body>
+</html>
