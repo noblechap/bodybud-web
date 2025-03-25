@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        // Extract token from URL like /auth/reset-confirm/uid/token/
+        const path = window.location.pathname.split('/');
+        const uid = path[path.length-2];
+        const token = path[path.length-1];
+        
+        // Redirect to the confirm page with hash parameters
+        window.location.href = `/auth/reset-confirm/#uid=${uid}&token=${token}`;
+    </script>
+</head>
+<body>
+    Redirecting...
+</body>
+</html>

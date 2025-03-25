@@ -25,11 +25,19 @@
     </form>
 
     <script>
-        // Extract token and uid from URL path
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        const uid = pathSegments[pathSegments.length - 2];
-        const token = pathSegments[pathSegments.length - 1];
-        
+        // Extract token and uid from URL HASH (new version)
+        const hash = window.location.hash.substring(1); // Remove the #
+        const params = new URLSearchParams(hash);
+        const uid = params.get('uid');
+        const token = params.get('token');
+
+        // Show error if parameters are missing
+        if (!uid || !token) {
+            document.getElementById('passwordError').textContent = 'Invalid reset link. Please request a new one.';
+            document.getElementById('passwordError').style.display = 'block';
+            document.getElementById('resetConfirmForm').querySelector('button').disabled = true;
+        }
+
         document.getElementById('resetConfirmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -40,11 +48,19 @@
             
             // Validate passwords match
             if (newPassword !== confirmPassword) {
+                errorElement.textContent = "Passwords don't match";
                 errorElement.style.display = 'block';
                 return;
             }
-            errorElement.style.display = 'none';
             
+            // Additional password strength check (optional)
+            if (newPassword.length < 8) {
+                errorElement.textContent = "Password must be at least 8 characters";
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            errorElement.style.display = 'none';
             button.disabled = true;
             button.textContent = 'Updating...';
             
