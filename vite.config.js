@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/bodybud-web/',
+  base: '/',
   resolve: {
     alias: {
       crypto: 'crypto-browserify',  
