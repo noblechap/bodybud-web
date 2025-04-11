@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../pages/Home.vue'
 import TOS from '../pages/TermsOfService.vue'
 import PrivacyPolicy from '../pages/PrivacyPolicy.vue'
