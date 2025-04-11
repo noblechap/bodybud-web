@@ -4,7 +4,7 @@ import crypto from 'crypto-browserify'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/', 
+  base: '/bodybud-web/',
   resolve: {
     alias: {
       crypto: 'crypto-browserify',  
