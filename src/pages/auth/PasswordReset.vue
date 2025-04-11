@@ -33,7 +33,7 @@ export default {
       this.isSubmitting = true;
       
       try {
-        const response = await fetch('https://bodybud-production-ee705fe30726.herokuapp.com/api/password-reset/', {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/password-reset/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: this.email })
