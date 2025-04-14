@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@vueuse/core": "^13.1.0",
     "crypto-browserify": "^3.12.1",
     "pinia": "^3.0.2",
     "sass": "^1.86.3",
