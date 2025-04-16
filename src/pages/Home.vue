@@ -12,7 +12,7 @@
         playsinline
         class="hero-video"
       >
-        <source :src="videoSrc" type="video/webm">
+        <source :src="videoSrc" :type="videoType">
         <!-- Fallback for browsers that don't support WebM -->
         Your browser does not support HTML5 video.
       </video>
@@ -161,18 +161,20 @@ import weightImage from '../assets/weight.png'
 import supplementImage from '../assets/supplement.png'
 import downloadImage from '../assets/black.svg'
 
-const videoSrc = ref(new URL('../assets/preview.webm', import.meta.url).href);
-
-
-const hero = ref(null)
-const feature1 = ref(null)
-const feature2 = ref(null)
-const feature3 = ref(null)
-const feature4 = ref(null)
-const gallery = ref(null)
-const cta = ref(null)
+// Dynamic video source selection
+const videoSrc = ref('')
+const videoType = ref('')
 
 onMounted(() => {
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  if (isSafari) {
+    videoSrc.value = new URL('../assets/preview.mp4', import.meta.url).href
+    videoType.value = 'video/mp4'
+  } else {
+    videoSrc.value = new URL('../assets/preview.webm', import.meta.url).href
+    videoType.value = 'video/webm; codecs="vp9"'
+  }
+
   setupObserver(hero.value, 'fade-in')
   setupObserver(feature1.value, 'slide-up')
   setupObserver(feature2.value, 'slide-up')
@@ -181,6 +183,14 @@ onMounted(() => {
   setupObserver(gallery.value, 'fade-in')
   setupObserver(cta.value, 'scale-up')
 })
+
+const hero = ref(null)
+const feature1 = ref(null)
+const feature2 = ref(null)
+const feature3 = ref(null)
+const feature4 = ref(null)
+const gallery = ref(null)
+const cta = ref(null)
 
 function setupObserver(element, animationClass) {
   useIntersectionObserver(
@@ -198,6 +208,7 @@ const onDownload = () => {
   window.open('https://apps.apple.com/us/app/bodybud/id6742726101', '_blank')
 }
 </script>
+
 
 <style scoped>
 /* Base Styles */
