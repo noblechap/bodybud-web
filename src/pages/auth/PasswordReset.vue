@@ -3,17 +3,17 @@
     <div class="logo">
       <h1>BodyBud</h1>
     </div>
-    
+
     <h2>Reset Password</h2>
     <form @submit.prevent="handleSubmit">
-      <input 
-        type="email" 
-        v-model="email" 
-        placeholder="Your account email" 
+      <input
+        type="email"
+        v-model="email"
+        placeholder="Your account email"
         required
-      >
+      />
       <button type="submit" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Sending...' : 'Send Reset Link' }}
+        {{ isSubmitting ? "Sending..." : "Send Reset Link" }}
       </button>
     </form>
   </div>
@@ -21,40 +21,43 @@
 
 <script>
 export default {
-  name: 'PasswordReset',
+  name: "PasswordReset",
   data() {
     return {
-      email: '',
-      isSubmitting: false
-    }
+      email: "",
+      isSubmitting: false,
+    };
   },
   methods: {
     async handleSubmit() {
       this.isSubmitting = true;
-      
+
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/password-reset/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: this.email })
-        });
-        
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/password-reset/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: this.email }),
+          },
+        );
+
         if (response.ok) {
-          alert('Check your email for reset instructions');
-          this.email = ''; // Clear the form
+          alert("Check your email for reset instructions");
+          this.email = ""; // Clear the form
         } else {
           const error = await response.json();
-          alert(error.detail || 'Request failed. Please try again.');
+          alert(error.detail || "Request failed. Please try again.");
         }
       } catch (err) {
         console.log(err);
-        alert('Network error. Please check your connection.');
+        alert("Network error. Please check your connection.");
       } finally {
         this.isSubmitting = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -75,12 +78,13 @@ input {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px; 
+  border-radius: 4px;
   outline: none;
   transition: border-color 0.3s ease;
 }
 
-input, button {
+input,
+button {
   padding: 10px;
   font-size: 16px;
 }

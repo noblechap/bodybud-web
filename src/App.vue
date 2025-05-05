@@ -1,23 +1,20 @@
 <template>
   <v-app>
-    <app-header /> 
+    <app-header v-if="!isCoachingRoute" />
     <v-main>
       <router-view />
     </v-main>
-    <app-footer />
+    <app-footer v-if="!isCoachingRoute" />
   </v-app>
 </template>
 
+<script setup>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-<script>
-import AppHeader from './components/AppHeader.vue'
-import AppFooter from './components/AppFooter.vue'
+import AppHeader from "./components/AppHeader.vue";
+import AppFooter from "./components/AppFooter.vue";
 
-export default {
-  name: 'App',
-  components: {
-    AppHeader,
-    AppFooter
-  }
-}
+const route = useRoute();
+const isCoachingRoute = computed(() => route.path.startsWith("/coaching"));
 </script>
