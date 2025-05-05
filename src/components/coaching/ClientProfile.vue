@@ -1,7 +1,8 @@
 <template>
   <div class="client-profile-view">
     <div class="header-container">
-      <h1>Client Profile</h1>
+      <h1 v-if="!isLoading">{{ clientStore.username }}'s Profile</h1>
+      <h1 v-else>...</h1>
       <v-btn color="primary" @click="goBack">
         <v-icon start>mdi-arrow-left</v-icon>
         Back to Clients

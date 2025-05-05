@@ -508,7 +508,7 @@ function bodyPartLabel(part) {
 
 function loadTemplate() {
   editedWorkout.value = JSON.parse(JSON.stringify(props.template));
-  if (editedWorkout.value.name === "New Workout") {
+  if (!editedWorkout.value.id) {
     nameFocused.value = true;
     isNewWorkout.value = true;
   }

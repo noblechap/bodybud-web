@@ -124,8 +124,9 @@
             prepend-icon="mdi-plus"
             size="large"
             class="text-capitalize"
+            @click="showNewCategoryDialog = true"
           >
-            Create Your First Template
+            Create Your First Category
           </v-btn>
         </v-card>
       </v-slide-y-transition>

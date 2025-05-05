@@ -70,7 +70,7 @@
               size="small"
               @click="router.push('/')"
             >
-              Sign Up
+              Sign Up on the App
             </v-btn>
           </v-card-actions>
 

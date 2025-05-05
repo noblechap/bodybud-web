@@ -251,6 +251,7 @@ const saveSupplement = () => {
 
   try {
     if (isEditing.value) {
+      currentSupplement.value.date = new Date();
       clientStore.updateSupplement(currentSupplement.value);
       toast.success("Supplement updated successfully!");
     } else {
