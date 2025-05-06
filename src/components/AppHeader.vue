@@ -19,7 +19,7 @@ const router = useRouter();
 
 const links = [
   { name: "Home", path: "/" },
-  { name: "Coaching", path: "/coaching" },
+  { name: "Coaching", path: "/login" },
   {
     name: "Download",
     link: "https://apps.apple.com/us/app/bodybud/id6742726101",

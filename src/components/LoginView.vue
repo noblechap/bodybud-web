@@ -122,6 +122,7 @@ const handleLogin = async () => {
     loading.value = true;
     error.value = null;
     await authStore.login(email.value, password.value);
+    router.push("/coaching");
   } catch (err) {
     error.value = err.response?.data?.message || err.message || "Login failed";
   } finally {

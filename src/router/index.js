@@ -10,12 +10,18 @@ import ClientsView from "../components/coaching/ClientsView.vue";
 import NutritionView from "../components/coaching/NutritionView.vue";
 import WorkoutView from "../components/coaching/WorkoutView.vue";
 import ClientProfile from "../components/coaching/ClientProfile.vue";
+import LoginView from "../components/LoginView.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: LoginView,
   },
   {
     path: "/coaching",
@@ -30,7 +36,6 @@ const routes = [
         path: "client/:id",
         name: "clientProfile",
         component: ClientProfile,
-        props: true,
       },
     ],
   },

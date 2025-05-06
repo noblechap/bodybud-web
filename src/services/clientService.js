@@ -18,7 +18,16 @@ apiClient.interceptors.request.use((config) => {
 
 export async function getClientById(id) {
   try {
-    const response = await apiClient.get(`/coaching/clients/${id}`);
+    const response = await apiClient.get(`/coaching/clients/${id}/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteClient(clientId) {
+  try {
+    const response = await apiClient.delete(`/coaching/clients/${clientId}/`);
     return response.data;
   } catch (error) {
     throw error;

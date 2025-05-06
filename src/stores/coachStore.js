@@ -27,6 +27,15 @@ export const useCoachStore = defineStore("coach", () => {
     }
   }
 
+  function removeClient(clientId) {
+    const index = clients.value.findIndex(
+      (client) => client.id === Number(clientId),
+    );
+    if (index !== -1) {
+      clients.value.splice(index, 1);
+    }
+  }
+
   async function fetchClients() {
     try {
       isLoading.value = true;
@@ -91,5 +100,6 @@ export const useCoachStore = defineStore("coach", () => {
     createMeal,
     addClient,
     deleteMeal,
+    removeClient,
   };
 });
