@@ -26,18 +26,20 @@ const router = useRouter();
 const logout = async () => {
   try {
     authStore.logout();
-    router.push("/coaching");
+    router.push("/login");
   } catch (error) {
     console.error("Logout failed:", error);
   }
 };
 
 onMounted(async () => {
-  try {
-    coachStore.fetchClients();
-    coachStore.fetchMeals();
-  } catch (error) {
-    console.error("Error fetching clients:", error);
+  if (authStore.isAuthenticated) {
+    try {
+      await coachStore.fetchClients();
+      await coachStore.fetchMeals();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }
 });
 </script>

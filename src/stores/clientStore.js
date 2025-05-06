@@ -12,6 +12,7 @@ import {
   updateExistingSupplement,
   deleteExistingSupplement,
   signalChanges,
+  deleteClient,
 } from "../services/clientService";
 
 export const useClientStore = defineStore("client", () => {
@@ -42,6 +43,30 @@ export const useClientStore = defineStore("client", () => {
       meal_plan.value = data.meal_plan[0];
 
       clientId.value = id;
+    } catch (err) {
+      error.value = err;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function removeClient() {
+    try {
+      const response = await deleteClient(clientId.value);
+
+      // Reset all client-related data
+      clientId.value = null;
+      username.value = null;
+      usingPounds.value = true;
+      workout_history.value = [];
+      workout_templates.value = [];
+      supplements.value = [];
+      bodyweights.value = [];
+      food_goals.value = {};
+      meal_plan.value = null;
+
+      return response;
     } catch (err) {
       error.value = err;
       throw err;
@@ -207,5 +232,6 @@ export const useClientStore = defineStore("client", () => {
     addSupplement,
     updateSupplement,
     deleteSupplement,
+    removeClient,
   };
 });

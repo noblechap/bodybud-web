@@ -3,10 +3,34 @@
     <div class="header-container">
       <h1 v-if="!isLoading">{{ clientStore.username }}'s Profile</h1>
       <h1 v-else>...</h1>
-      <v-btn color="primary" @click="goBack">
-        <v-icon start>mdi-arrow-left</v-icon>
-        Back to Clients
-      </v-btn>
+      <div>
+        <v-menu offset-y offset-x location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              icon
+              variant="flat"
+              color="grey-lighten-2"
+              v-bind="props"
+              size="small"
+              class="mr-4"
+            >
+              <v-icon color="grey-darken-2">mdi-cog</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="showRemoveDialog = true">
+              <v-list-item-title class="error--text">
+                <v-icon color="error" left>mdi-close-box</v-icon>
+                Remove Client
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-btn color="primary" @click="goBack">
+          <v-icon start>mdi-arrow-left</v-icon>
+          Back to Clients
+        </v-btn>
+      </div>
     </div>
 
     <v-card>
@@ -47,6 +71,22 @@
 
     <!-- Optional fallback when there's no data -->
   </div>
+  <v-dialog v-model="showRemoveDialog" max-width="400">
+    <v-card>
+      <v-card-title class="headline">Confirm Removal</v-card-title>
+      <v-card-text>
+        Are you sure you want to remove {{ clientStore.username }} as your
+        client? This action cannot be undone.
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="grey-darken-1" text @click="showRemoveDialog = false">
+          Cancel
+        </v-btn>
+        <v-btn color="error" text @click="removeClient"> Remove </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -60,13 +100,16 @@ import SupplementView from "./SupplementView.vue";
 import BodyWeightView from "./BodyWeightView.vue";
 import ClientMealPlanView from "./ClientMealPlanView.vue";
 import { useClientStore } from "../../stores/clientStore";
+import { useCoachStore } from "../../stores/coachStore";
 
 const clientStore = useClientStore();
+const coachStore = useCoachStore();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const selectedTab = ref(0);
 const { isLoading } = storeToRefs(clientStore);
+const showRemoveDialog = ref(false);
 const clientId = route.params.id;
 
 onMounted(async () => {
@@ -75,6 +118,19 @@ onMounted(async () => {
 
 const goBack = () => {
   router.push({ name: "clients" });
+};
+
+const removeClient = async () => {
+  try {
+    //goBack();
+    coachStore.removeClient(clientId);
+    showRemoveDialog.value = false;
+    await clientStore.removeClient();
+    toast.success("Client removed successfully");
+    router.push({ name: "clients" });
+  } catch (error) {
+    toast.error("Failed to remove client: " + error.message);
+  }
 };
 </script>
 

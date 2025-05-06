@@ -40,11 +40,13 @@
         <v-card-title>Add New Client</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="" ref="addClientForm">
+            Username
             <v-text-field
               v-model="newClient.username"
-              label="Username"
+              label=""
               :rules="usernameRules"
               required
+              autocomplete="off"
             ></v-text-field>
           </v-form>
         </v-card-text>
