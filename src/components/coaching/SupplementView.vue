@@ -85,8 +85,8 @@
     <v-card
       v-if="clientStore.supplements.length === 0"
       flat
-      color="surface-variant"
-      class="rounded-lg pa-8 text-center"
+      color="grey-lighten-4"
+      class="rounded-xl pa-8 text-center"
     >
       <v-icon size="64" color="primary" class="mb-4">mdi-pill</v-icon>
       <h3 class="text-h6 mb-2">No Supplements Found</h3>

@@ -24,29 +24,14 @@
           />
         </v-col>
       </v-row>
-
-      <div
-        class="text-center mt-8"
-        v-if="clientStore.workout_history.length >= 12"
-      >
-        <v-btn
-          variant="outlined"
-          color="primary"
-          class="px-8"
-          rounded="lg"
-          size="large"
-        >
-          Load More
-        </v-btn>
-      </div>
     </template>
 
     <v-slide-y-transition>
       <v-card
         v-if="clientStore.workout_history.length === 0"
         flat
-        color="surface-variant"
-        class="rounded-lg pa-8 text-center"
+        color="grey-lighten-4"
+        class="rounded-xl pa-8 text-center"
       >
         <v-icon size="64" color="primary" class="mb-4">mdi-dumbbell</v-icon>
         <h3 class="text-h6 mb-2">No Workouts Recorded Yet</h3>

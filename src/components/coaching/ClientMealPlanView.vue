@@ -432,6 +432,7 @@
                 group="foods"
                 item-key="id"
                 class="meal-foods-list"
+                v-if="plannedMeal.meal.meal_foods.length"
                 @add="handleAddToExistingMeal"
                 @change="markChanges"
               >
