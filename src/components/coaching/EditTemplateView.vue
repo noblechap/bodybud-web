@@ -772,11 +772,11 @@ const getExerciseImage = (imageName) => {
   align-content: start;
 
   @media (min-width: 1600px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @media (min-width: 1200px) and (max-width: 1599px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   @media (min-width: 800px) and (max-width: 1199px) {
@@ -815,9 +815,18 @@ const getExerciseImage = (imageName) => {
   }
 
   .v-card-text {
-    display: flex;
-    width: 100%;
+    flex-direction: column; // Stack vertically on small screens
     padding: 12px;
+    gap: 8px;
+
+    @media (min-width: 600px) {
+      flex-direction: row; // Horizontal layout on larger screens
+    }
+  }
+  .exercise-meta {
+    flex-wrap: wrap; // Allow chips to wrap
+    gap: 4px;
+    margin-top: 8px;
   }
 }
 

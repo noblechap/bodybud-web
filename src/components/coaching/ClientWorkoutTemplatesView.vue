@@ -13,7 +13,6 @@
           rounded="lg"
           prepend-icon="mdi-plus"
           size="large"
-          class="text-capitalize"
           @click="showNewCategoryDialog = true"
         >
           New Category
@@ -90,17 +89,6 @@
               />
             </v-col>
           </v-row>
-
-          <v-btn
-            v-if="category.workouts.length > 4"
-            variant="text"
-            color="primary"
-            block
-            class="mt-4 text-capitalize"
-          >
-            View All {{ category.workouts.length }} Templates
-            <v-icon>mdi-chevron-down</v-icon>
-          </v-btn>
         </v-card>
       </template>
 
@@ -108,8 +96,9 @@
         <v-card
           v-if="clientStore.workout_templates.length === 0"
           flat
-          color="surface-variant"
+          color="grey-lighten-4"
           class="rounded-xl pa-8 text-center"
+          style="border: none !important"
         >
           <v-icon size="64" color="primary" class="mb-4">mdi-dumbbell</v-icon>
           <h3 class="text-h6 mb-2">No Templates Created Yet</h3>
@@ -123,7 +112,6 @@
             rounded="lg"
             prepend-icon="mdi-plus"
             size="large"
-            class="text-capitalize"
             @click="showNewCategoryDialog = true"
           >
             Create Your First Category

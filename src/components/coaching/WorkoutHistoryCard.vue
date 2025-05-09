@@ -1,12 +1,12 @@
 <template>
   <v-card class="pa-0 mb-6 workout-card" elevation="4" rounded="xl">
     <!-- Header Section with primary background -->
-    <v-card-title
-      class="d-flex justify-space-between align-center bg-primary pa-4 pa-md-6"
-    >
-      <div>
+    <v-card-title class="d-flex bg-primary pa-4 pa-md-6">
+      <div class="flex-grow-1" style="min-width: 0">
+        <!-- CSS overflow hack -->
         <h3
-          class="text-h6 text-md-h5 text-lg-h4 font-weight-bold mb-1 text-white"
+          class="text-h6 text-lg-h5 font-weight-bold mb-1 text-white"
+          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
         >
           {{ workout.name }}
         </h3>
@@ -14,7 +14,12 @@
           {{ formattedDate(workout.date) }}
         </p>
       </div>
-      <v-icon icon="mdi-dumbbell" size="28" color="white" />
+      <v-icon
+        icon="mdi-dumbbell"
+        size="28"
+        color="white"
+        class="flex-shrink-0"
+      />
     </v-card-title>
 
     <!-- Content Section -->
