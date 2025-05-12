@@ -408,6 +408,12 @@ section {
   }
 }
 
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .gallery-caption {
   position: absolute;
   bottom: 0;

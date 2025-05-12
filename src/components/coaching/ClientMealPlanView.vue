@@ -31,6 +31,8 @@
                   @click:clear="clearSearch"
                   hide-details
                   class="search-field"
+                  :loading="isSearching"
+                  :disabled="isSearching"
                 ></v-text-field>
                 <v-btn
                   variant="tonal"
@@ -49,7 +51,18 @@
               <v-icon icon="mdi-hand-back-left" class="mr-2"></v-icon>
               Drag foods to meals
             </div>
-
+            <template v-if="isSearching">
+              <div class="search-loading">
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  size="24"
+                  width="2"
+                  class="mr-2"
+                ></v-progress-circular>
+                <span>Searching foods...</span>
+              </div>
+            </template>
             <draggable
               :list="searchResults.length > 0 ? searchResults : filteredFoods"
               :group="{ name: 'foods', pull: 'clone', put: false }"
@@ -704,6 +717,7 @@ const isAddingFood = ref(false);
 const searchResults = ref([]);
 const nameFocused = ref(false);
 const descFocused = ref(false);
+const isSearching = ref(false);
 const editedMealPlan = ref(
   clientStore.meal_plan
     ? JSON.parse(JSON.stringify(clientStore.meal_plan))
@@ -998,6 +1012,7 @@ const searchFoods = async () => {
   if (!foodSearch.value.trim()) return;
 
   try {
+    isSearching.value = true;
     await foodStore.searchFoods(foodSearch.value);
     if (foodStore.searchResults.length === 0) {
       toast.info("No foods found");
@@ -1006,12 +1021,15 @@ const searchFoods = async () => {
     }
   } catch (error) {
     console.error("Search failed:", error);
+  } finally {
+    isSearching.value = false;
   }
 };
 
 const clearSearch = () => {
   foodSearch.value = "";
   searchResults.value = [];
+  isSearching.value = false;
 };
 </script>
 
@@ -1549,5 +1567,14 @@ const clearSearch = () => {
       grid-template-columns: 1fr;
     }
   }
+}
+
+.search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  grid-column: 1 / -1;
 }
 </style>
