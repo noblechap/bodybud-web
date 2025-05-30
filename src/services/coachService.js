@@ -61,3 +61,35 @@ export async function fetchCoachClients() {
     throw error;
   }
 }
+
+export async function fetchCoachCheckInTemplates() {
+  try {
+    const response = await apiCoach.get("/coaching/checkin-templates/");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function saveNewCheckInTemplate(payload) {
+  try {
+    const response = await apiCoach.post(
+      "/coaching/checkin-template/",
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteTemplate(templateId) {
+  try {
+    const response = await apiCoach.delete(
+      `/coaching/checkin-templates/${templateId}/`,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
