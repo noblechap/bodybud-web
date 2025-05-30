@@ -37,6 +37,7 @@ onMounted(async () => {
     try {
       await coachStore.fetchClients();
       await coachStore.fetchMeals();
+      await coachStore.fetchCheckInTemplates();
     } catch (error) {
       console.error("Error fetching data:", error);
     }

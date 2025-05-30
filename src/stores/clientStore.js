@@ -13,6 +13,8 @@ import {
   deleteExistingSupplement,
   signalChanges,
   deleteClient,
+  assignClientCheckIn,
+  getCheckinById,
 } from "../services/clientService";
 
 export const useClientStore = defineStore("client", () => {
@@ -22,11 +24,13 @@ export const useClientStore = defineStore("client", () => {
   const bodyweights = ref([]);
   const food_goals = ref({});
   const meal_plan = ref(null);
+  const client_checkins = ref([]);
 
   const clientId = ref(null);
   const username = ref(null);
   const usingPounds = ref(true);
   const isLoading = ref(false);
+  const mediaLoading = ref(false);
   const error = ref(null);
 
   async function fetchClient(id) {
@@ -41,6 +45,7 @@ export const useClientStore = defineStore("client", () => {
       bodyweights.value = data.bodyweights || [];
       food_goals.value = data.food_goals[0];
       meal_plan.value = data.meal_plan[0];
+      client_checkins.value = data.client_checkins || [];
 
       clientId.value = id;
     } catch (err) {
@@ -48,6 +53,26 @@ export const useClientStore = defineStore("client", () => {
       throw err;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  async function fetchCheckin(id) {
+    try {
+      mediaLoading.value = true;
+      const data = await getCheckinById(id);
+
+      const checkinIndex = client_checkins.value.findIndex(
+        (checkin) => checkin.id === id,
+      );
+      if (checkinIndex !== -1) {
+        client_checkins.value[checkinIndex] = data;
+      }
+      return data;
+    } catch (err) {
+      error.value = err;
+      throw err;
+    } finally {
+      mediaLoading.value = false;
     }
   }
 
@@ -211,6 +236,17 @@ export const useClientStore = defineStore("client", () => {
     }
   }
 
+  async function assignCheckIn(payload) {
+    try {
+      const response = await assignClientCheckIn(payload);
+      client_checkins.value.unshift(response);
+      return response;
+    } catch (err) {
+      error.value = err;
+      throw err;
+    }
+  }
+
   return {
     clientId,
     username,
@@ -220,8 +256,10 @@ export const useClientStore = defineStore("client", () => {
     bodyweights,
     food_goals,
     meal_plan,
+    client_checkins,
     isLoading,
     error,
+    mediaLoading,
     fetchClient,
     updatePlan,
     updateWorkout,
@@ -233,5 +271,7 @@ export const useClientStore = defineStore("client", () => {
     updateSupplement,
     deleteSupplement,
     removeClient,
+    assignCheckIn,
+    fetchCheckin,
   };
 });

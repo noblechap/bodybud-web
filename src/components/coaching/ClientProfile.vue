@@ -36,6 +36,7 @@
     <v-card>
       <!-- Add your client management components here -->
       <v-tabs v-model="selectedTab">
+        <v-tab>Check-In</v-tab>
         <v-tab>Nutrition</v-tab>
         <v-tab>Workout History</v-tab>
         <v-tab>Workout Templates</v-tab>
@@ -44,28 +45,33 @@
       </v-tabs>
     </v-card>
 
-    <!-- Nutrition Tab -->
+    <!-- CheckIn Tab -->
     <div v-if="selectedTab === 0" class="pa-6">
+      <CheckinView v-if="!isLoading" />
+    </div>
+
+    <!-- Nutrition Tab -->
+    <div v-else-if="selectedTab === 1" class="pa-6">
       <ClientMealPlanView v-if="!isLoading" />
     </div>
 
     <!-- Workout History -->
-    <div v-else-if="selectedTab === 1" class="pa-6">
+    <div v-else-if="selectedTab === 2" class="pa-6">
       <ClientWorkoutHistoryView v-if="!isLoading" />
     </div>
 
     <!-- Workout Templates -->
-    <div v-else-if="selectedTab === 2" class="pa-6">
+    <div v-else-if="selectedTab === 3" class="pa-6">
       <ClientWorkoutTemplatesView v-if="!isLoading" />
     </div>
 
     <!-- Supplement Tab -->
-    <div v-else-if="selectedTab === 3" class="pa-6">
+    <div v-else-if="selectedTab === 4" class="pa-6">
       <SupplementView v-if="!isLoading" />
     </div>
 
     <!-- BodyWeight Tab -->
-    <div v-else-if="selectedTab === 4" class="pa-6">
+    <div v-else-if="selectedTab === 5" class="pa-6">
       <BodyWeightView v-if="!isLoading" />
     </div>
 
@@ -98,6 +104,7 @@ import ClientWorkoutHistoryView from "./ClientWorkoutHistoryView.vue";
 import ClientWorkoutTemplatesView from "./ClientWorkoutTemplatesView.vue";
 import SupplementView from "./SupplementView.vue";
 import BodyWeightView from "./BodyWeightView.vue";
+import CheckinView from "./CheckinView.vue";
 import ClientMealPlanView from "./ClientMealPlanView.vue";
 import { useClientStore } from "../../stores/clientStore";
 import { useCoachStore } from "../../stores/coachStore";

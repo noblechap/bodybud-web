@@ -149,3 +149,24 @@ export async function signalChanges(clientId) {
     throw error;
   }
 }
+
+export async function assignClientCheckIn(payload) {
+  try {
+    const response = await apiClient.post(
+      `/coaching/clients/${payload.client}/assign-checkin/`,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCheckinById(id) {
+  try {
+    const response = await apiClient.get(`/coaching/checkins/${id}/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
