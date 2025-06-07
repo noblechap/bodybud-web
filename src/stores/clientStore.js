@@ -15,6 +15,7 @@ import {
   deleteClient,
   assignClientCheckIn,
   getCheckinById,
+  fetchClientSteps,
 } from "../services/clientService";
 
 export const useClientStore = defineStore("client", () => {
@@ -25,6 +26,7 @@ export const useClientStore = defineStore("client", () => {
   const food_goals = ref({});
   const meal_plan = ref(null);
   const client_checkins = ref([]);
+  const steps = ref([]);
 
   const clientId = ref(null);
   const username = ref(null);
@@ -73,6 +75,17 @@ export const useClientStore = defineStore("client", () => {
       throw err;
     } finally {
       mediaLoading.value = false;
+    }
+  }
+
+  async function fetchSteps() {
+    try {
+      const data = await fetchClientSteps(clientId.value);
+      steps.value = data || [];
+      return data;
+    } catch (err) {
+      error.value = err;
+      throw err;
     }
   }
 
@@ -257,10 +270,12 @@ export const useClientStore = defineStore("client", () => {
     food_goals,
     meal_plan,
     client_checkins,
+    steps,
     isLoading,
     error,
     mediaLoading,
     fetchClient,
+    fetchSteps,
     updatePlan,
     updateWorkout,
     createCategory,

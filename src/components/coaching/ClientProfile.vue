@@ -42,6 +42,7 @@
         <v-tab>Workout Templates</v-tab>
         <v-tab>Supplements</v-tab>
         <v-tab>Measurements</v-tab>
+        <v-tab>Steps</v-tab>
       </v-tabs>
     </v-card>
 
@@ -75,6 +76,11 @@
       <BodyWeightView v-if="!isLoading" />
     </div>
 
+    <!-- Steps Tab -->
+    <div v-else-if="selectedTab === 6" class="pa-6">
+      <StepsView v-if="!isLoading" />
+    </div>
+
     <!-- Optional fallback when there's no data -->
   </div>
   <v-dialog v-model="showRemoveDialog" max-width="400">
@@ -104,6 +110,7 @@ import ClientWorkoutHistoryView from "./ClientWorkoutHistoryView.vue";
 import ClientWorkoutTemplatesView from "./ClientWorkoutTemplatesView.vue";
 import SupplementView from "./SupplementView.vue";
 import BodyWeightView from "./BodyWeightView.vue";
+import StepsView from "./StepsView.vue";
 import CheckinView from "./CheckinView.vue";
 import ClientMealPlanView from "./ClientMealPlanView.vue";
 import { useClientStore } from "../../stores/clientStore";
