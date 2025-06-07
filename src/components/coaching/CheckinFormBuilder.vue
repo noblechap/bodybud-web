@@ -278,6 +278,8 @@
                     variant="outlined"
                     class="mt-3 mx-4"
                     hide-details="auto"
+                    counter
+                    maxlength="200"
                   ></v-text-field>
 
                   <div class="item-options">

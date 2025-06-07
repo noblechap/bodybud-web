@@ -170,3 +170,14 @@ export async function getCheckinById(id) {
     throw error;
   }
 }
+
+export async function fetchClientSteps(clientId) {
+  try {
+    const response = await apiClient.get(
+      `/users/${clientId}/activity-summary/`,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
