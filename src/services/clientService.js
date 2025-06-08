@@ -181,3 +181,24 @@ export async function fetchClientSteps(clientId) {
     throw error;
   }
 }
+
+export async function fetchClientStepsGoal(clientId) {
+  try {
+    const response = await apiClient.get(`/users/${clientId}/step-goal/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateClientStepsGoal(clientId, goalId, payload) {
+  try {
+    const response = await apiClient.put(
+      `/users/${clientId}/step-goal/${goalId}/`,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
