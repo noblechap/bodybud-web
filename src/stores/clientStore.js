@@ -16,6 +16,8 @@ import {
   assignClientCheckIn,
   getCheckinById,
   fetchClientSteps,
+  fetchClientStepsGoal,
+  updateClientStepsGoal,
 } from "../services/clientService";
 
 export const useClientStore = defineStore("client", () => {
@@ -27,6 +29,7 @@ export const useClientStore = defineStore("client", () => {
   const meal_plan = ref(null);
   const client_checkins = ref([]);
   const steps = ref([]);
+  const stepGoal = ref({});
 
   const clientId = ref(null);
   const username = ref(null);
@@ -82,7 +85,28 @@ export const useClientStore = defineStore("client", () => {
     try {
       const data = await fetchClientSteps(clientId.value);
       steps.value = data || [];
-      return data;
+
+      const data2 = await fetchClientStepsGoal(clientId.value);
+      stepGoal.value = data2 || {};
+    } catch (err) {
+      error.value = err;
+      throw err;
+    }
+  }
+
+  async function updateSteps(goalId, newStepGoal) {
+    try {
+      const payload = {
+        step_goal: newStepGoal,
+      };
+
+      const response = await updateClientStepsGoal(
+        clientId.value,
+        goalId,
+        payload,
+      );
+      stepGoal.value = response || {};
+      return response;
     } catch (err) {
       error.value = err;
       throw err;
@@ -271,11 +295,13 @@ export const useClientStore = defineStore("client", () => {
     meal_plan,
     client_checkins,
     steps,
+    stepGoal,
     isLoading,
     error,
     mediaLoading,
     fetchClient,
     fetchSteps,
+    updateSteps,
     updatePlan,
     updateWorkout,
     createCategory,

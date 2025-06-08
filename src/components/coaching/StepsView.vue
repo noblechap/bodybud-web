@@ -56,7 +56,22 @@
     <!-- Chart Section -->
     <v-card class="chart-section" elevation="2">
       <v-card-title>
-        <span>Steps Progress</span>
+        <!-- Step Goal Display Button -->
+        <div class="step-goal-wrapper">
+          <span>Steps Progress</span>
+          <v-btn
+            color="grey-lighten-2"
+            variant="flat"
+            rounded="lg"
+            prepend-icon="mdi-pencil"
+            size="small"
+            @click="openEditDialog"
+          >
+            <span class="text-h6">
+              {{ formatNumber(currentStepGoal?.step_goal) }}</span
+            >
+          </v-btn>
+        </div>
       </v-card-title>
       <v-card-text>
         <!-- Day selector toggle -->
@@ -98,7 +113,7 @@
           </div>
         </div>
 
-        <div class="chart-container" @wheel="handleChartScroll">
+        <div class="chart-container">
           <div class="chart-wrapper" ref="chartWrapper">
             <svg
               ref="chartSvg"
@@ -387,6 +402,55 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Step Goal Edit Dialog -->
+    <v-dialog v-model="editDialog" max-width="400">
+      <v-card>
+        <v-card-title class="dialog-title"> Edit Step Goal </v-card-title>
+        <v-card-text class="dialog-content">
+          <div class="current-goal-display">
+            {{ formatNumber(editedGoalValue) }} steps
+          </div>
+          <div class="adjustment-controls">
+            <v-btn
+              large
+              color="error"
+              @click="adjustGoal(-1000)"
+              :disabled="editedGoalValue <= 1000"
+            >
+              <span>
+                <v-icon>mdi-minus</v-icon>
+                1000
+              </span>
+            </v-btn>
+            <v-btn
+              large
+              color="success"
+              @click="adjustGoal(1000)"
+              :disabled="editedGoalValue >= 20000"
+            >
+              <span>
+                <v-icon>mdi-plus</v-icon>
+                1000
+              </span>
+            </v-btn>
+          </div>
+        </v-card-text>
+        <v-card-actions class="dialog-actions">
+          <v-btn variant="text" color="grey" @click="editDialog = false">
+            Cancel
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            variant="flat"
+            @click="saveStepGoal"
+            :loading="isSavingGoal"
+          >
+            Save Changes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -394,8 +458,10 @@
 import { ref, computed, onMounted, nextTick, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useClientStore } from "../../stores/clientStore";
+import { useToast } from "vue-toastification";
 
 const clientStore = useClientStore();
+const toast = useToast();
 const { steps, isLoading } = storeToRefs(clientStore);
 
 // Reactive data
@@ -405,7 +471,13 @@ const selectedItem = ref(null);
 const chartWrapper = ref(null);
 const chartSvg = ref(null);
 const chartOffset = ref(0);
-const selectedDays = ref(14); // 🔹 Now user-controlled
+const selectedDays = ref(14);
+
+// Step goal editing
+const editDialog = ref(false);
+const editedGoalValue = ref(null);
+const isSavingGoal = ref(false);
+const currentStepGoal = ref(null);
 
 // Chart dimensions
 const chartHeight = 350;
@@ -562,19 +634,6 @@ const showDetailsDialog = (item) => {
   detailsDialog.value = true;
 };
 
-const scrollChart = (direction) => {
-  const newOffset = chartOffset.value + direction;
-  if (newOffset >= 0 && newOffset <= maxChartOffset.value) {
-    chartOffset.value = newOffset;
-  }
-};
-
-const handleChartScroll = (event) => {
-  event.preventDefault();
-  const direction = event.deltaX > 0 ? 1 : -1;
-  scrollChart(direction);
-};
-
 const getChartPeriodText = () => {
   if (!visibleChartData.value.length) return "No data";
   const start = formatDate(visibleChartData.value[0].date);
@@ -649,7 +708,13 @@ watch(selectedDays, () => {
 
 // Lifecycle
 onMounted(async () => {
-  await clientStore.fetchSteps();
+  if (
+    Object.keys(clientStore.stepGoal).length === 0 ||
+    clientStore.steps.length === 0
+  ) {
+    await clientStore.fetchSteps();
+  }
+  currentStepGoal.value = clientStore.stepGoal;
   if (chartData.value.length > selectedDays.value) {
     chartOffset.value = Math.max(
       0,
@@ -663,9 +728,91 @@ onMounted(async () => {
     fullChartWidth.value = Math.max(800, containerWidth - 40);
   }
 });
+
+// Add this validation rule
+const positiveNumberRule = (value) => {
+  return value > 0 || "Step goal must be positive";
+};
+
+// Step goal editing methods
+const openEditDialog = () => {
+  if (currentStepGoal.value) {
+    editedGoalValue.value = currentStepGoal.value.step_goal;
+    editDialog.value = true;
+  }
+};
+
+const adjustGoal = (amount) => {
+  const newValue = editedGoalValue.value + amount;
+  if (newValue >= 1000 && newValue <= 20000) {
+    editedGoalValue.value = newValue;
+  }
+};
+
+const cancelEditingGoal = () => {
+  isEditingGoal.value = false;
+  editedGoalValue.value = null;
+};
+
+const saveStepGoal = async () => {
+  if (!editedGoalValue.value || !currentStepGoal.value) return;
+
+  try {
+    isSavingGoal.value = true;
+    await clientStore.updateSteps(
+      currentStepGoal.value.id,
+      parseInt(editedGoalValue.value),
+    );
+    currentStepGoal.value = clientStore.stepGoal;
+    editDialog.value = false;
+    toast.success("Step goal updated successfully!");
+  } catch (error) {
+    toast.error("Failed to update step goal. Please try again.");
+    console.error("Error updating step goal:", error);
+  } finally {
+    isSavingGoal.value = false;
+  }
+};
 </script>
 
 <style scoped>
+.step-goal-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Edit Dialog Styles */
+.dialog-title {
+  padding: 20px 24px 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.dialog-content {
+  padding: 16px 24px;
+  text-align: center;
+}
+
+.current-goal-display {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: var(--v-primary-base);
+}
+
+.adjustment-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
 .steps-view {
   padding: 20px;
   max-width: 1200px;
