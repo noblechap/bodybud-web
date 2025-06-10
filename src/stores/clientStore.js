@@ -51,6 +51,8 @@ export const useClientStore = defineStore("client", () => {
       food_goals.value = data.food_goals[0];
       meal_plan.value = data.meal_plan[0];
       client_checkins.value = data.client_checkins || [];
+      steps.value = [];
+      stepGoal.value = {};
 
       clientId.value = id;
     } catch (err) {
