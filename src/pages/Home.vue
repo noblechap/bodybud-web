@@ -74,9 +74,9 @@
         Monitor key metrics for optimal bodybuildling outcomes.
       </p>
       <ul class="text-h6">
+        <li>Daily step counter</li>
         <li>Supplement regimen tracker with reminder alerts</li>
-        <li>Bodyweight trends</li>
-        <li>Blood pressure and heart rate monitoring</li>
+        <li>Bodyweight and blood pressure trends</li>
       </ul>
     </div>
     <div class="image-placeholder feature-image">
