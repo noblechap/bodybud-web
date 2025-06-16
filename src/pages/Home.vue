@@ -71,12 +71,12 @@
         Comprehensive Health Tracking
       </h2>
       <p class="text-h5 mb-4">
-        Monitor key metrics for optimal bodybuidling outcomes.
+        Monitor key metrics for optimal bodybuilding outcomes.
       </p>
       <ul class="text-h6">
+        <li>Daily step counter</li>
         <li>Supplement regimen tracker with reminder alerts</li>
-        <li>Bodyweight trends</li>
-        <li>Blood pressure and heart rate monitoring</li>
+        <li>Bodyweight and blood pressure trends</li>
       </ul>
     </div>
     <div class="image-placeholder feature-image">
