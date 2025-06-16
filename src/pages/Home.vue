@@ -71,7 +71,7 @@
         Comprehensive Health Tracking
       </h2>
       <p class="text-h5 mb-4">
-        Monitor key metrics for optimal bodybuidling outcomes.
+        Monitor key metrics for optimal bodybuildling outcomes.
       </p>
       <ul class="text-h6">
         <li>Supplement regimen tracker with reminder alerts</li>
