@@ -71,7 +71,7 @@
         Comprehensive Health Tracking
       </h2>
       <p class="text-h5 mb-4">
-        Monitor key metrics for optimal bodybuildling outcomes.
+        Monitor key metrics for optimal bodybuilding outcomes.
       </p>
       <ul class="text-h6">
         <li>Daily step counter</li>
