@@ -5,6 +5,12 @@
         <v-card class="elevation-12" rounded="lg">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Login</v-toolbar-title>
+            <img
+              src="../assets/logo.png"
+              alt="BodyBud logo"
+              style="height: 60px"
+              class="pr-4"
+            />
           </v-toolbar>
 
           <v-card-text>
@@ -132,6 +138,10 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+.fill-height {
+  min-height: 80vh;
+}
+
 .v-container {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
