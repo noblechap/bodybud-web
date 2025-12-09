@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "Nuxtr.nuxt-vscode-extentions",
+    "mikestead.dotenv",
+    "dbaeumer.vscode-eslint"
+  ]
+}

@@ -1,8 +1,22 @@
 [build]
-  command = "npm run build"
+  command = "pnpm build"
   publish = "dist"
+  functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+  # Install pnpm automatically
+  PNPM_VERSION = "10"
+
+# SPA routing support
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Environment-specific settings
+[context.production.environment]
+  NUXT_APP_BASE_URL = "/"
+
+[context.deploy-preview.environment]
+  NUXT_APP_BASE_URL = "/"
