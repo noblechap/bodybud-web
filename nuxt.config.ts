@@ -27,13 +27,6 @@ export default defineNuxtConfig({
     },
   ],
   ssr: false,
-  nitro: {
-    preset: 'static',
-    serveStatic: true,
-    output: {
-      dir: 'dist/public'
-    }
-  },
   modules: [
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
