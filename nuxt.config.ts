@@ -52,7 +52,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      baseApiUrl: "http://127.0.0.1:8000/api",
+      baseApiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api',
       useFakeData: false
     }
   }
