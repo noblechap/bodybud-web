@@ -13,7 +13,9 @@ export default defineNuxtConfig({
       link: [
         { rel: "icon", type: "image/png", href: "/logo.png" }
       ]
-    }
+    },
+    baseURL: '/',
+    buildAssetsDir: '/_nuxt/'
   },
   devtools: {
     enabled: true,
@@ -27,7 +29,10 @@ export default defineNuxtConfig({
   ssr: false,
   nitro: {
     preset: 'static',
-    serveStatic: true
+    serveStatic: true,
+    output: {
+      dir: 'dist'
+    }
   },
   modules: [
     "@pinia/nuxt",
