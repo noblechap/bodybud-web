@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     preset: 'static',
     serveStatic: true,
     output: {
-      dir: 'dist'
+      dir: 'dist/public'
     }
   },
   modules: [
