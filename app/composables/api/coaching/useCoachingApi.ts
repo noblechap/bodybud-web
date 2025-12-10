@@ -2,6 +2,7 @@ import type {
   AddClientPayload,
   AssignCheckInPayload,
   CheckInTemplate,
+  CheckIn,
   Client,
   MealTemplate,
   SaveCheckInTemplatePayload,
@@ -28,6 +29,10 @@ export function useCoachingApi() {
 
   async function fetchCheckInTemplates() {
     return $authenticatedApi<CheckInTemplate[]>("/coaching/checkin-templates/");
+  }
+
+  async function fetchCheckInById(checkinId: number) {
+    return $authenticatedApi<CheckIn>(`/coaching/checkins/${checkinId}/`);
   }
 
   async function assignCheckIn(payload: AssignCheckInPayload) {
@@ -76,6 +81,7 @@ export function useCoachingApi() {
     updateClient,
     fetchMeals,
     fetchCheckInTemplates,
+    fetchCheckInById,
     assignCheckIn,
     saveCheckInTemplate,
     deleteCheckInTemplate,
