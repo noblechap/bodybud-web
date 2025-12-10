@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CheckIn } from "~/types/checkIn";
 import type { CheckInTemplate } from "~/types/models";
+import { useCoachingApi } from "~/composables/api/coaching/useCoachingApi";
+
 
 interface Props {
   checkins?: CheckIn[];
@@ -13,6 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { createQueryParamComputed } = useUrl();
+const coachingApi = useCoachingApi();
+const { showLoading, hideLoading } = useGlobalLoading();
 
 const activeTab = createQueryParamComputed(
   "checkin-tab",
@@ -37,15 +41,27 @@ function handleAssignFromTemplate(template: CheckInTemplate) {
   navigateTo(`/coaching/client/${props.clientId}/checkin/new?template=${template.id}`);
 }
 
-function handleViewCheckin(checkin: CheckIn) {
-  selectedCheckin.value = checkin;
-  if (checkin.completed_at) {
-    showCheckinDetailView.value = true;
+async function handleViewCheckin(checkin: CheckIn) {
+  try {
+    if (checkin.completed_at) {
+      showLoading("Loading check-in details...");
+      // Fetch the check-in with signed URLs for photos/videos
+      const fullCheckin = await coachingApi.fetchCheckInById(checkin.id);
+      selectedCheckin.value = fullCheckin;
+      showCheckinDetailView.value = true;
+    }
+    else {
+      showCheckinDetailDialog.value = true;
+    }
   }
-  else {
-    showCheckinDetailDialog.value = true;
+  catch (error) {
+    console.error("Failed to load check-in details:", error);
+  }
+  finally {
+    hideLoading();
   }
 }
+
 
 function handleCloseDetailView() {
   showCheckinDetailView.value = false;
