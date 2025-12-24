@@ -6,4 +6,5 @@ export enum ClientProfileTab {
   Supplements = "supplements",
   Measurements = "measurements",
   Steps = "steps",
+  ExerciseProgression = "exercise-progression"
 }

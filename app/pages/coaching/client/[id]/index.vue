@@ -119,6 +119,9 @@ onMounted(() => {
         <v-tab :value="ClientProfileTab.Steps">
           Steps
         </v-tab>
+        <v-tab :value="ClientProfileTab.ExerciseProgression">
+          Exercise Progression
+        </v-tab>
       </v-tabs>
     </v-card>
 
@@ -163,6 +166,11 @@ onMounted(() => {
       <!-- Steps Tab -->
       <v-tabs-window-item :value="ClientProfileTab.Steps">
         <StepsView v-if="clientInfo" />
+      </v-tabs-window-item>
+
+      <!-- Exercise Progression Tab -->
+      <v-tabs-window-item :value="ClientProfileTab.ExerciseProgression">
+        <ClientExerciseProgressionWrapper v-if="clientInfo" />
       </v-tabs-window-item>
     </v-tabs-window>
 

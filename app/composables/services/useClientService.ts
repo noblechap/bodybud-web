@@ -3,6 +3,7 @@ import type { ClientInfo } from "~/types/models";
 import { useClientApi } from "~/composables/api/coaching/useClientApi";
 import { useClientStore } from "~/store/clientStore";
 import { useCoachingStore } from "~/store/coachingStore";
+import type { ExerciseProgression } from "~/types/client";
 
 export function useClientService() {
   const clientApi = useClientApi();
@@ -30,6 +31,28 @@ export function useClientService() {
         meal_plan: (data.meal_plan?.[0]) || undefined,
         client_checkins: (data.client_checkins || []) as typeof clientStore.client_checkins,
       });
+
+      return data;
+    }
+    catch (error) {
+      const errorMsg = (error as { data?: { message?: string } })?.data?.message || "Failed to load client data";
+      toast.error(errorMsg);
+      throw error;
+    }
+    finally {
+      hideLoading();
+    }
+  }
+
+  async function loadClientExerciseProgression(clientId: string | number, exerciseId: number, reps: number): Promise<ExerciseProgression[] | null> {
+    try {
+      showLoading("Loading client exercise progression...");
+      
+      const data = await clientApi.fetchClientExerciseProgression(clientId, exerciseId, { min_reps: reps, max_reps: reps});
+
+      // Update client store with setter
+      clientStore.setExerciseProgression(data || []);
+      console.log("Loaded exercise progression:", data);
 
       return data;
     }
@@ -98,6 +121,7 @@ export function useClientService() {
 
   return {
     loadClientData,
+    loadClientExerciseProgression,
     deleteClient,
     updateMealPlan,
   };
