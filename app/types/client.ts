@@ -75,3 +75,19 @@ export interface UpdateNutritionPlanResponse {
   meal_plan: MealPlan;
   food_goals: FoodGoals;
 }
+
+export interface ExerciseProgressionPayload {
+  min_reps: number;
+  max_reps: number;
+} 
+
+export interface ExerciseProgression {
+  date: string; 
+  reps: number;
+  weight: number;
+  rpe: number;
+  pr: boolean;
+  workout_instance_id: number;
+  set_rank: number;
+  exercise_name: string;
+}

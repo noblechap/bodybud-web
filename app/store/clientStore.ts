@@ -5,6 +5,7 @@ import type {
   Supplement,
   WorkoutHistory,
   WorkoutTemplate,
+  ExerciseProgression
 } from "~/types/client";
 import type { FoodGoals, MealPlan } from "~/types/food";
 import type { CheckIn } from "~/types/models";
@@ -28,6 +29,7 @@ export const useClientStore = defineStore("client", () => {
   const client_checkins = ref<CheckIn[]>([]);
   const steps = ref<StepData[]>([]);
   const stepGoal = ref<StepGoal>({} as StepGoal);
+  const exerciseProgression = ref<ExerciseProgression[]>([]);
 
   const clientId = ref<number | null>(null);
   const username = ref<string | null>(null);
@@ -72,6 +74,10 @@ export const useClientStore = defineStore("client", () => {
 
   function setStepGoal(data: StepGoal) {
     stepGoal.value = data;
+  }
+  
+  function setExerciseProgression(data: ExerciseProgression[]) {
+    exerciseProgression.value = data;
   }
 
   function updateCheckin(checkin: CheckIn) {
@@ -123,6 +129,7 @@ export const useClientStore = defineStore("client", () => {
     client_checkins.value = [];
     steps.value = [];
     stepGoal.value = {} as StepGoal;
+    exerciseProgression.value = [];
   }
 
   return {
@@ -140,6 +147,7 @@ export const useClientStore = defineStore("client", () => {
     stepGoal,
     mediaLoading,
     usingPounds,
+    exerciseProgression,
 
     // Actions
     setClientData,
@@ -153,5 +161,6 @@ export const useClientStore = defineStore("client", () => {
     addBodyWeight,
     deleteBodyWeight,
     resetClientData,
+    setExerciseProgression,
   };
 });
