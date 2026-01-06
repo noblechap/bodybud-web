@@ -4,10 +4,12 @@ import type {
   UpdateWorkoutTemplatePayload,
 } from "~/composables/api/coaching/useWorkoutTemplateApi";
 import { useWorkoutTemplateApi } from "~/composables/api/coaching/useWorkoutTemplateApi";
+import { useClientApi } from "~/composables/api/coaching/useClientApi";
 import { useClientStore } from "~/store/clientStore";
 
 export function useWorkoutTemplateService() {
   const workoutTemplateApi = useWorkoutTemplateApi();
+  const clientApi = useClientApi();
   const clientStore = useClientStore();
   const toast = useToast();
   const { showLoading, hideLoading } = useGlobalLoading();
@@ -62,6 +64,7 @@ export function useWorkoutTemplateService() {
           toast.success(`Category "${categoryName}" deleted successfully!`);
         }
       }
+      await clientApi.signalChanges(clientStore.clientId);
     }
     catch (error) {
       const errorMsg = (error as { data?: { message?: string } })?.data?.message || "Failed to delete category";
@@ -82,7 +85,7 @@ export function useWorkoutTemplateService() {
     try {
       showLoading("Creating workout template...");
       const response = await workoutTemplateApi.createWorkoutTemplate(clientStore.clientId, payload);
-
+      await clientApi.signalChanges(clientStore.clientId);
       toast.success("Workout template created successfully!");
       return response;
     }
@@ -110,6 +113,8 @@ export function useWorkoutTemplateService() {
         payload,
       );
 
+      await clientApi.signalChanges(clientStore.clientId);
+      
       toast.success("Workout template updated successfully!");
       return response;
     }
@@ -141,7 +146,7 @@ export function useWorkoutTemplateService() {
           category.workouts.splice(workoutIndex, 1);
         }
       });
-
+      await clientApi.signalChanges(clientStore.clientId);
       toast.success("Workout template deleted successfully!");
     }
     catch (error) {

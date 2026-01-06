@@ -15,19 +15,25 @@ export function useClientApi() {
     });
   }
 
-async function fetchClientExerciseProgression(
-  clientId: string | number, 
-  exerciseId: number, 
-  payload: ExerciseProgressionPayload
-) {
-  return $authenticatedApi<ExerciseProgression[]>(
-    `/users/${clientId}/exercises/${exerciseId}/best-sets/`,
-    {
-      method: "GET",
-      params: payload,
-    }
-  );
-}
+  async function fetchClientExerciseProgression(
+    clientId: string | number, 
+    exerciseId: number, 
+    payload: ExerciseProgressionPayload
+  ) {
+    return $authenticatedApi<ExerciseProgression[]>(
+      `/users/${clientId}/exercises/${exerciseId}/best-sets/`,
+      {
+        method: "GET",
+        params: payload,
+      }
+    );
+  }
+
+  async function signalChanges(clientId: string | number) {
+    return $authenticatedApi(`/coaching/signal-changes/${clientId}/`, {
+      method: "PATCH",
+    });
+  }
 
   async function updateClientMealPlan(clientId: string | number, payload: UpdateMealPlanPayload) {
     return $authenticatedApi<{ meal_plan: MealPlan; food_goals: FoodGoals }>(`/coaching/clients/${clientId}/update-nutrition-plan/`, {
@@ -41,5 +47,6 @@ async function fetchClientExerciseProgression(
     removeClient,
     updateClientMealPlan,
     fetchClientExerciseProgression,
+    signalChanges,
   };
 }

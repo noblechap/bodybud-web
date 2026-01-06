@@ -1,9 +1,11 @@
 import type { Supplement } from "~/types/client";
 import { useSupplementsApi } from "~/composables/api/supplements/useSupplementsApi";
+import { useClientApi } from "~/composables/api/coaching/useClientApi";
 import { useClientStore } from "~/store/clientStore";
 
 export function useSupplementService() {
   const supplementsApi = useSupplementsApi();
+  const clientApi = useClientApi();
   const clientStore = useClientStore();
   const toast = useToast();
 
@@ -15,6 +17,7 @@ export function useSupplementService() {
     try {
       const newSupplement = await supplementsApi.createSupplement(clientStore.clientId, payload);
       clientStore.addSupplement(newSupplement);
+      await clientApi.signalChanges(clientStore.clientId);
       toast.success("Supplement added successfully!");
     }
     catch (error) {
@@ -35,6 +38,7 @@ export function useSupplementService() {
         supplement,
       );
       clientStore.updateSupplement(updatedSupplement);
+      await clientApi.signalChanges(clientStore.clientId);
       toast.success("Supplement updated successfully!");
     }
     catch (error) {
@@ -51,6 +55,7 @@ export function useSupplementService() {
     try {
       await supplementsApi.deleteSupplement(clientStore.clientId, supplementId);
       clientStore.deleteSupplement(supplementId);
+      await clientApi.signalChanges(clientStore.clientId);
       toast.success("Supplement deleted successfully!");
     }
     catch (error) {
