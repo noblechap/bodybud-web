@@ -54,7 +54,7 @@ async function handleSubmit() {
       toast.success(
         "Password updated successfully! You can now login with your new password.",
       );
-      window.location.href = "https://bodybud.app/auth/reset-request/";
+      window.location.href = "https://bodybud.app/login";
     }
   }
   catch {
