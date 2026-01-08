@@ -166,6 +166,7 @@ export function useCoachingService() {
       }
 
       toast.success("Client information updated successfully");
+      await fetchClients();
       return updatedClient;
     }
     catch (error) {
@@ -177,6 +178,32 @@ export function useCoachingService() {
       hideLoading();
     }
   }
+
+  async function createClientAccount(payload: {
+  email: string;
+  fullName?: string;
+  sendWelcomeEmail: boolean;
+}) {
+  try {
+    showLoading("Creating client account...");
+    
+    const response = await coachingApi.createClientAccount({
+      email: payload.email,
+      full_name: payload.fullName,
+      send_welcome_email: payload.sendWelcomeEmail, 
+    });
+    
+    await fetchClients();
+    
+    toast.success("Client account created successfully!");
+    
+    return response;
+  } catch (error: any) {
+    throw error;
+  } finally {
+    hideLoading();
+  }
+}
 
   async function loadInitialData() {
     try {
@@ -204,5 +231,6 @@ export function useCoachingService() {
     saveCheckInTemplate,
     deleteCheckInTemplate,
     loadInitialData,
+    createClientAccount,
   };
 }

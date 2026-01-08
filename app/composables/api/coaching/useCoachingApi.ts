@@ -7,6 +7,8 @@ import type {
   MealTemplate,
   SaveCheckInTemplatePayload,
   UpdateClientPayload,
+  CreateClientAccountPayload,
+  CreateClientAccountResponse,
 } from "~/types/models";
 
 export function useCoachingApi() {
@@ -21,6 +23,14 @@ export function useCoachingApi() {
       method: "POST",
       body: payload,
     });
+  }
+
+  async function createClientAccount(payload: CreateClientAccountPayload) {
+    return $authenticatedApi<CreateClientAccountResponse>("/register/", {
+        method: "POST",
+        body: payload,
+      }
+    );
   }
 
   async function fetchMeals() {
@@ -87,5 +97,6 @@ export function useCoachingApi() {
     deleteCheckInTemplate,
     createMealTemplate,
     deleteMealTemplate,
+    createClientAccount,
   };
 }

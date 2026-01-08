@@ -11,6 +11,7 @@ definePageMeta({
 });
 
 const coachingService = useCoachingService();
+const toast = useToast();
 
 const { clients } = storeToRefs(useCoachingStore());
 
@@ -19,7 +20,15 @@ const selectedClient = ref<Client>();
 const search = ref("");
 const isEditing = ref(false);
 const showAddClientDialog = ref(false);
-const newClientEmail = ref("");
+
+const addClientTab = ref("existing"); 
+const newClientUsername = ref(""); 
+const newClientEmail = ref(""); 
+const newClientName = ref(""); 
+const sendWelcomeEmail = ref(true);
+const accountCreationError = ref("");
+const isCreatingAccount = ref(false);
+
 const editForm = ref({
   client_full_name: "",
   client_email: "",
@@ -112,9 +121,6 @@ async function saveClient() {
   try {
     await coachingService.updateClient(selectedClient.value.id, editForm.value);
 
-    // Recharger la liste complète des clients
-    await coachingService.fetchClients();
-
     // Mettre à jour le client sélectionné avec les nouvelles données du store
     if (selectedClient.value) {
       const updatedClient = clients.value.find((c) => c.id === selectedClient.value?.id);
@@ -132,29 +138,70 @@ async function saveClient() {
 }
 
 function openAddClientDialog() {
+  newClientUsername.value = "";
   newClientEmail.value = "";
+  newClientName.value = "";
+  sendWelcomeEmail.value = true;
+  accountCreationError.value = "";
+  isCreatingAccount.value = false;
+  addClientTab.value = "existing"; 
   showAddClientDialog.value = true;
 }
 
 function closeAddClientDialog() {
   showAddClientDialog.value = false;
+  newClientUsername.value = "";
   newClientEmail.value = "";
+  newClientName.value = "";
+  accountCreationError.value = "";
+  isCreatingAccount.value = false;
 }
 
-async function addClient() {
-  if (!newClientEmail.value || !newClientEmail.value.trim()) {
+async function addExistingClient() {
+  if (!newClientUsername.value || !newClientUsername.value.trim()) {
     return;
   }
 
   try {
-    await coachingService.addClient({ username: newClientEmail.value.trim() });
-    await coachingService.fetchClients();
+    await coachingService.addClient({ username: newClientUsername.value.trim() });
     closeAddClientDialog();
-  }
-  catch (error) {
-    console.error("Failed to add client:", error);
+    toast.success("Invitation sent to user.");
+  } catch (error) {
+    console.error("Failed to add existing client:", error);
+    toast.error("Failed to add client. Please check the username and try again.");
   }
 }
+
+async function createClientAccount() {
+  if (!newClientEmail.value || !isValidEmail.value) {
+    return;
+  }
+
+  isCreatingAccount.value = true;
+  accountCreationError.value = "";
+
+  try {
+    const response = await coachingService.createClientAccount({
+      email: newClientEmail.value.trim(),
+      fullName: newClientName.value.trim() || undefined,
+      sendWelcomeEmail: sendWelcomeEmail.value
+    });
+    closeAddClientDialog();
+    
+  } catch (error: any) {
+    console.error("Failed to create client account:", error);
+    accountCreationError.value = "Failed to create account. Please try again.";
+  } finally {
+    isCreatingAccount.value = false;
+  }
+}
+
+const isValidEmail = computed(() => {
+  const email = newClientEmail.value;
+  if (!email) return false;
+  const emailRegex = /.+@.+\..+/;
+  return emailRegex.test(email);
+});
 
 function formatDate(dateString: string | undefined): string {
   if (!dateString) {
@@ -828,37 +875,110 @@ onUnmounted(() => {
       </v-col>
     </v-row>
   </v-container>
-
-  <!-- Dialog pour ajouter un client -->
-  <v-dialog v-model="showAddClientDialog" max-width="500">
+  <v-dialog v-model="showAddClientDialog" max-width="600">
     <v-card>
       <v-card-title class="text-h5 pa-4">
         <v-icon color="primary" class="mr-2">
           mdi-account-plus
         </v-icon>
-        Add New Client
+        Add Client
       </v-card-title>
+
+      <v-tabs v-model="addClientTab" bg-color="transparent" color="primary" grow>
+        <v-tab value="existing">
+          <v-icon start>
+            mdi-account-search
+          </v-icon>
+          Add Existing User
+        </v-tab>
+        <v-tab value="new">
+          <v-icon start>
+            mdi-account-plus-outline
+          </v-icon>
+          Create New Account
+        </v-tab>
+      </v-tabs>
 
       <v-divider />
 
       <v-card-text class="pa-4">
-        <p class="text-body-2 text-medium-emphasis mb-4">
-          Enter the username of the user you want to add as a client. They will receive a coaching invitation.
-        </p>
+        <!-- Tab 1: Add Existing User (current functionality) -->
+        <v-tabs-window v-model="addClientTab">
+          <v-tabs-window-item value="existing">
+            <p class="text-body-2 text-medium-emphasis mb-4">
+              Enter the username of an existing user to add them as a client. They will receive a coaching invitation in the BodyBud app coach settings.
+            </p>
 
-        <v-text-field
-          v-model="newClientEmail"
-          label="Username"
-          prepend-inner-icon="mdi-account"
-          variant="outlined"
-          placeholder="username"
-          :rules="[
-            v => !!v || 'Username is required',
-            v => (v && v.length >= 4) || 'Username must be at least 4 characters',
-          ]"
-          autofocus
-          @keyup.enter="addClient"
-        />
+            <v-text-field
+              v-model="newClientUsername"
+              label="Username"
+              prepend-inner-icon="mdi-account"
+              variant="outlined"
+              placeholder="username"
+              :rules="[
+                v => !!v || 'Username is required',
+                v => (v && v.length >= 4) || 'Username must be at least 4 characters',
+              ]"
+              autofocus
+              @keyup.enter="addExistingClient"
+            />
+          </v-tabs-window-item>
+
+          <!-- Tab 2: Create New Account -->
+          <v-tabs-window-item value="new">
+            <p class="text-body-2 text-medium-emphasis mb-4">
+              Create a new account for your client. They will receive an email with login instructions.
+            </p>
+
+            <v-form ref="createAccountForm" @submit.prevent="createClientAccount">
+              <v-text-field
+                v-model="newClientEmail"
+                label="Email Address"
+                type="email"
+                prepend-inner-icon="mdi-email"
+                variant="outlined"
+                placeholder="client@example.com"
+                :rules="[
+                  v => !!v || 'Email is required',
+                  v => /.+@.+\..+/.test(v) || 'Email must be valid',
+                ]"
+                class="mb-3"
+                required
+                autofocus
+              />
+
+              <v-text-field
+                v-model="newClientName"
+                label="Client Full Name (optional)"
+                prepend-inner-icon="mdi-account-circle"
+                variant="outlined"
+                placeholder="John Doe"
+                class="mb-3"
+              />
+
+              <div class="d-flex align-center mb-4">
+                <v-checkbox
+                  v-model="sendWelcomeEmail"
+                  label="Send welcome email with login instructions"
+                  hide-details
+                  density="comfortable"
+                />
+                <v-tooltip location="top">
+                  <template #activator="{ props }">
+                    <v-icon v-bind="props" size="small" class="ml-1">
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <span>Client will receive an email with temporary credentials</span>
+                </v-tooltip>
+              </div>
+
+              <div v-if="accountCreationError" class="text-error text-body-2 mb-3">
+                {{ accountCreationError }}
+              </div>
+            </v-form>
+          </v-tabs-window-item>
+        </v-tabs-window>
       </v-card-text>
 
       <v-divider />
@@ -872,13 +992,30 @@ onUnmounted(() => {
         >
           Cancel
         </v-btn>
+        
+        <!-- Different buttons for different tabs -->
         <v-btn
+          v-if="addClientTab === 'existing'"
           color="primary"
           variant="elevated"
-          :disabled="!newClientEmail || newClientEmail.trim().length < 4"
-          @click="addClient"
+          :disabled="!newClientUsername || newClientUsername.trim().length < 4"
+          @click="addExistingClient"
         >
           Add Client
+        </v-btn>
+        
+        <v-btn
+          v-else
+          color="success"
+          variant="elevated"
+          :loading="isCreatingAccount"
+          :disabled="!newClientEmail || !isValidEmail"
+          @click="createClientAccount"
+        >
+          <v-icon start>
+            mdi-account-plus
+          </v-icon>
+          Create Account
         </v-btn>
       </v-card-actions>
     </v-card>

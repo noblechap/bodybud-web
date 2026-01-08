@@ -145,3 +145,16 @@ export interface ClientInfo {
   meal_plan?: MealPlan[];
   client_checkins: CheckIn[];
 }
+
+export interface CreateClientAccountPayload {
+  email: string;
+  full_name?: string;
+  send_welcome_email: boolean;
+}
+
+export interface CreateClientAccountResponse {
+  user_id: number;
+  username: string;
+  email: string;
+  temp_password: string;
+}
