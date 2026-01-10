@@ -493,7 +493,7 @@ onUnmounted(() => {
             </v-col>
 
             <!-- Empty State -->
-            <v-col v-if="filteredClients.length === 0" cols="12">
+            <v-col v-if="filteredClients.length === 0 && clients.length > 0" cols="12">
               <v-card elevation="0" class="text-center pa-12" rounded="lg">
                 <v-icon size="96" color="grey-lighten-1" class="mb-4">
                   mdi-account-search-outline
@@ -511,6 +511,19 @@ onUnmounted(() => {
                 >
                   Clear Search
                 </v-btn>
+              </v-card>
+            </v-col>
+            <v-col v-if="clients.length === 0" cols="12">
+              <v-card elevation="0" class="text-center pa-12" rounded="lg">
+                <v-icon size="96" color="grey-lighten-1" class="mb-4">
+                  mdi-account-search-outline
+                </v-icon>
+                <div class="text-h6 mb-2">
+                  No Clients Found
+                </div>
+                <div class="text-body-2 text-medium-emphasis mb-4">
+                  Start by adding your first client
+                </div>
               </v-card>
             </v-col>
           </v-row>
@@ -1006,7 +1019,7 @@ onUnmounted(() => {
         
         <v-btn
           v-else
-          color="success"
+          color="primary"
           variant="elevated"
           :loading="isCreatingAccount"
           :disabled="!newClientEmail || !isValidEmail"
