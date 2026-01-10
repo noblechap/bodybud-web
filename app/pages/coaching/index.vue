@@ -13,7 +13,7 @@ definePageMeta({
 const coachingService = useCoachingService();
 const toast = useToast();
 
-const { clients } = storeToRefs(useCoachingStore());
+const { clients, planTier, maxClientProvisions, provisionedClients } = storeToRefs(useCoachingStore());
 
 const clientProfileTab = ref("overview");
 const selectedClient = ref<Client>();
@@ -29,6 +29,80 @@ const sendWelcomeEmail = ref(true);
 const accountCreationError = ref("");
 const isCreatingAccount = ref(false);
 
+type PlanTier = 'free_trial' | 'basic' | 'professional' | 'enterprise' | 'custom' | 'none';
+
+interface PlanConfig {
+  display: string;
+  icon: string;
+  gradient: string;
+  avatarColor: string;
+  iconColor: string;
+}
+
+const getPlanConfig = (tier: string): PlanConfig => {
+  // Normalize tier to lowercase and map to known keys
+  const tierLower = tier?.toLowerCase() || 'none';
+  
+  // Map any display text back to keys if needed
+  const displayToKeyMap: Record<string, PlanTier> = {
+    'free trial': 'free_trial',
+    'basic': 'basic',
+    'professional': 'professional',
+    'enterprise': 'enterprise',
+    'custom': 'custom',
+    'inactive': 'none',
+    'no plan': 'none'
+  };
+  
+  const planTierKey = displayToKeyMap[tierLower] || (tierLower as PlanTier);
+  
+  const config: Record<PlanTier, PlanConfig> = {
+    'free_trial': {
+      display: 'Free Trial',
+      icon: 'mdi-timer-sand',
+      gradient: 'gradient-trial',
+      avatarColor: 'white',
+      iconColor: 'blue'
+    },
+    'basic': {
+      display: 'Basic',
+      icon: 'mdi-rocket-launch-outline',
+      gradient: 'gradient-basic',
+      avatarColor: 'white',
+      iconColor: 'green'
+    },
+    'professional': {
+      display: 'Professional',
+      icon: 'mdi-crown',
+      gradient: 'gradient-pro',
+      avatarColor: 'white',
+      iconColor: 'purple'
+    },
+    'enterprise': {
+      display: 'Enterprise',
+      icon: 'mdi-office-building',
+      gradient: 'gradient-enterprise',
+      avatarColor: 'white',
+      iconColor: 'deep-orange'
+    },
+    'custom': {
+      display: 'Custom',
+      icon: 'mdi-tools',
+      gradient: 'gradient-custom',
+      avatarColor: 'white',
+      iconColor: 'indigo'
+    },
+    'none': {
+      display: 'No Plan',
+      icon: 'mdi-account-off',
+      gradient: 'gradient-info',
+      avatarColor: 'white',
+      iconColor: 'grey'
+    }
+  };
+  return config[planTierKey] || config.none;
+};
+
 const editForm = ref({
   client_full_name: "",
   client_email: "",
@@ -40,8 +114,9 @@ const editForm = ref({
 const stats = computed(() => {
   const total = clients.value.length;
   const active = clients.value.filter((c) => c.client_full_name && c.client_full_name.trim() !== "").length;
-  const provisioned = clients.value.filter((c) => c.client_is_provisioned).length;
-  const maxProvisions = clients.value[0]?.max_client_provisions;
+  const provisioned = provisionedClients.value || 0;
+  const maxProvisions = maxClientProvisions.value || 0;
+  const currentPlanTier = planTier.value || "none";
 
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
@@ -52,7 +127,7 @@ const stats = computed(() => {
     return parseISO(c.coaching_since) >= weekAgo;
   }).length;
 
-  return { total, active, recentClients, provisioned, maxProvisions };
+  return { total, active, recentClients, provisioned, maxProvisions, currentPlanTier };
 });
 
 const filteredClients = computed(() => {
@@ -70,6 +145,30 @@ const filteredClients = computed(() => {
 
   return result;
 });
+
+const planConfig = computed(() => {
+  return getPlanConfig(stats.value.currentPlanTier);
+});
+
+const planCardClass = computed(() => {
+  return `gradient-card ${planConfig.value.gradient} rounded-lg`;
+});
+
+const avatarColor = computed(() => {
+  return planConfig.value.avatarColor;
+});
+
+const iconColor = computed(() => {
+  return planConfig.value.iconColor;
+});
+
+const planIcon = computed(() => {
+  return planConfig.value.icon;
+});
+
+const getPlanDisplay = () => {
+  return planConfig.value.display;
+};
 
 function selectClient(client: Client) {
   selectedClient.value = client;
@@ -335,7 +434,31 @@ onUnmounted(() => {
                 </v-card-text>
               </v-card>
             </v-col>
-
+            <v-col cols="12" sm="6" lg="3">
+              <v-card
+                elevation="2"
+                class="gradient-card gradient-warning"
+                rounded="lg"
+              >
+                <v-card-text>
+                  <div class="d-flex align-center justify-space-between">
+                    <div>
+                      <p class="text-caption text-white mb-1 text-uppercase font-weight-medium">
+                        New This Week
+                      </p>
+                      <p class="text-h3 font-weight-bold text-white">
+                        {{ stats.recentClients }}
+                      </p>
+                    </div>
+                    <v-avatar size="64" color="white" class="elevation-4">
+                      <v-icon size="32" color="warning">
+                        mdi-calendar-week
+                      </v-icon>
+                    </v-avatar>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
             <v-col cols="12" sm="6" lg="3">
               <v-card
                 elevation="2"
@@ -367,26 +490,25 @@ onUnmounted(() => {
                 </v-card-text>
               </v-card>
             </v-col>
-
             <v-col cols="12" sm="6" lg="3">
               <v-card
                 elevation="2"
-                class="gradient-card gradient-warning"
+                :class="planCardClass"
                 rounded="lg"
               >
                 <v-card-text>
                   <div class="d-flex align-center justify-space-between">
-                    <div>
+                    <div class="flex-grow-1 overflow-hidden">
                       <p class="text-caption text-white mb-1 text-uppercase font-weight-medium">
-                        New This Week
+                        Current plan tier
                       </p>
-                      <p class="text-h3 font-weight-bold text-white">
-                        {{ stats.recentClients }}
+                      <p class="text-h4 font-weight-bold text-white text--lighten-1 nowrap-ellipsis">
+                        {{ getPlanDisplay() }}
                       </p>
                     </div>
-                    <v-avatar size="64" color="white" class="elevation-4">
-                      <v-icon size="32" color="warning">
-                        mdi-calendar-week
+                    <v-avatar size="64" :color="avatarColor" class="elevation-4">
+                      <v-icon size="32" :color="iconColor">
+                        {{ planIcon }}
                       </v-icon>
                     </v-avatar>
                   </div>
@@ -394,7 +516,6 @@ onUnmounted(() => {
               </v-card>
             </v-col>
           </v-row>
-
           <v-row class="mb-4">
             <v-col cols="12" md="6">
               <v-text-field
@@ -1028,6 +1149,7 @@ onUnmounted(() => {
 <style scoped>
 .gradient-card {
   background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1059,6 +1181,31 @@ onUnmounted(() => {
 .gradient-secondary {
   --gradient-start: rgb(var(--v-theme-secondary));
   --gradient-end: rgb(var(--v-theme-secondary-darken-1));
+}
+
+.gradient-trial {
+  --gradient-start: rgb(var(--v-theme-info));
+  --gradient-end: #0277bd;
+}
+
+.gradient-basic {
+  --gradient-start: #4CAF50;
+  --gradient-end: #2E7D32;
+}
+
+.gradient-pro {
+  --gradient-start: #9C27B0;
+  --gradient-end: #6A1B9A;
+}
+
+.gradient-enterprise {
+  --gradient-start: #FF5722;
+  --gradient-end: #D84315;
+}
+
+.gradient-custom {
+  --gradient-start: #3F51B5;
+  --gradient-end: #283593;
 }
 
 .gradient-info {
@@ -1138,5 +1285,12 @@ onUnmounted(() => {
 
 .detail-panel .detail-card {
   animation: slideInRight 0.3s ease-out;
+}
+
+.nowrap-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 </style>

@@ -47,6 +47,13 @@ export interface Client {
   max_client_provisions: number;
 }
 
+export interface CoachInfo {
+    max_client_provisions: number | null;
+    provisioned_clients: number | null;
+    plan_tier: string | null;
+    clients: Client[]; 
+}
+
 export interface AddClientPayload {
   username: string;
 }

@@ -18,7 +18,10 @@ export function useCoachingService() {
     try {
       showLoading("Loading clients...");
       const data = await coachingApi.fetchClients();
-      coachingStore.clients = data || [];
+      coachingStore.clients = data.clients || [];
+      coachingStore.maxClientProvisions = data.max_client_provisions;
+      coachingStore.planTier = data.plan_tier;
+      coachingStore.provisionedClients = data.provisioned_clients;
     }
     catch (error) {
       const errorMsg = (error as { data?: { message?: string } })?.data?.message || "Failed to fetch clients";

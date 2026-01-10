@@ -9,13 +9,14 @@ import type {
   UpdateClientPayload,
   CreateClientAccountPayload,
   CreateClientAccountResponse,
+  CoachInfo,
 } from "~/types/models";
 
 export function useCoachingApi() {
   const { $authenticatedApi } = useNuxtApp();
 
   async function fetchClients() {
-    return $authenticatedApi<Client[]>("/coaching/clients/");
+    return $authenticatedApi<CoachInfo>("/coaching/clients/");
   }
 
   async function addClient(payload: AddClientPayload) {
