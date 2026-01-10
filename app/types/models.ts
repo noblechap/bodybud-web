@@ -43,6 +43,8 @@ export interface Client {
   client_notes?: string | null;
   client_emergency_contact?: string | null;
   coaching_since?: string;
+  client_is_provisioned: boolean;
+  max_client_provisions: number;
 }
 
 export interface AddClientPayload {

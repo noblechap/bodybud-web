@@ -40,6 +40,8 @@ const editForm = ref({
 const stats = computed(() => {
   const total = clients.value.length;
   const active = clients.value.filter((c) => c.client_full_name && c.client_full_name.trim() !== "").length;
+  const provisioned = clients.value.filter((c) => c.client_is_provisioned).length;
+  const maxProvisions = clients.value[0]?.max_client_provisions;
 
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
@@ -50,7 +52,7 @@ const stats = computed(() => {
     return parseISO(c.coaching_since) >= weekAgo;
   }).length;
 
-  return { total, active, recentClients };
+  return { total, active, recentClients, provisioned, maxProvisions };
 });
 
 const filteredClients = computed(() => {
@@ -344,15 +346,21 @@ onUnmounted(() => {
                   <div class="d-flex align-center justify-space-between">
                     <div>
                       <p class="text-caption text-white mb-1 text-uppercase font-weight-medium">
-                        With Contact Info
+                        Pro access granted
                       </p>
                       <p class="text-h3 font-weight-bold text-white">
-                        {{ stats.active }}
+                        {{ stats.provisioned }}
+                        <span
+                          class="text-h5 font-weight-medium ml-1"
+                          style="color: rgba(255, 255, 255, 0.6); vertical-align: baseline;"
+                        >
+                          / {{ stats.maxProvisions }}
+                        </span>
                       </p>
                     </div>
                     <v-avatar size="64" color="white" class="elevation-4">
                       <v-icon size="32" color="success">
-                        mdi-check-circle
+                        mdi-license
                       </v-icon>
                     </v-avatar>
                   </div>
@@ -447,7 +455,7 @@ onUnmounted(() => {
                       </div>
                     </div>
                     <v-chip
-                      v-if="client.client_phone || client.client_email"
+                      v-if="client.client_is_provisioned"
                       color="success"
                       size="small"
                       variant="flat"
@@ -455,7 +463,7 @@ onUnmounted(() => {
                       <v-icon start size="small">
                         mdi-check-circle
                       </v-icon>
-                      Contact Info
+                      Pro
                     </v-chip>
                   </div>
 
@@ -468,24 +476,6 @@ onUnmounted(() => {
                     </span>
                     <span class="text-caption font-weight-medium">
                       {{ formatDate(client.coaching_since) }}
-                    </span>
-                  </div>
-
-                  <div v-if="client.client_email" class="d-flex align-center mt-2">
-                    <v-icon size="small" class="mr-2" color="primary">
-                      mdi-email
-                    </v-icon>
-                    <span class="text-caption text-truncate">
-                      {{ client.client_email }}
-                    </span>
-                  </div>
-
-                  <div v-if="client.client_phone" class="d-flex align-center mt-2">
-                    <v-icon size="small" class="mr-2" color="primary">
-                      mdi-phone
-                    </v-icon>
-                    <span class="text-caption">
-                      {{ client.client_phone }}
                     </span>
                   </div>
                 </v-card-text>
