@@ -125,7 +125,7 @@ const stats = computed(() => {
       return false;
     }
     return parseISO(c.coaching_since) >= weekAgo;
-  }).length;
+  });
 
   return { total, active, recentClients, provisioned, maxProvisions, currentPlanTier };
 });
@@ -169,6 +169,16 @@ const planIcon = computed(() => {
 const getPlanDisplay = () => {
   return planConfig.value.display;
 };
+
+const isNewClient = (client: Client): boolean => {
+  if (!client.coaching_since) {
+    return false;
+  }
+  const coachingDate = parseISO(client.coaching_since);
+  const now = new Date();
+  const diffDays = differenceInDays(now, coachingDate);
+  return diffDays < 7;
+};  
 
 function selectClient(client: Client) {
   selectedClient.value = client;
@@ -447,7 +457,7 @@ onUnmounted(() => {
                         New This Week
                       </p>
                       <p class="text-h3 font-weight-bold text-white">
-                        {{ stats.recentClients }}
+                        {{ stats.recentClients.length }}
                       </p>
                     </div>
                     <v-avatar size="64" color="white" class="elevation-4">
@@ -575,21 +585,35 @@ onUnmounted(() => {
                         @{{ client.username }}
                       </div>
                     </div>
-                    <v-chip
-                      v-if="client.client_is_provisioned"
-                      color="success"
-                      size="small"
-                      variant="flat"
-                    >
-                      <v-icon start size="small">
-                        mdi-check-circle
-                      </v-icon>
-                      Pro
-                    </v-chip>
+                    <div class="d-flex flex-column align-end">
+                      <v-chip
+                        v-if="isNewClient(client)"
+                        color="warning"
+                        size="small"
+                        variant="flat"
+                        class="mb-2"
+                        style="width: 100%; justify-content: center;"
+                      >
+                        <v-icon start size="small">
+                          mdi-calendar-week
+                        </v-icon>
+                        New
+                      </v-chip>
+                      <v-chip
+                        v-if="client.client_is_provisioned"
+                        color="success"
+                        size="small"
+                        variant="flat"
+                        style="width: 100%; justify-content: center;"
+                      >
+                        <v-icon start size="small">
+                          mdi-check-circle
+                        </v-icon>
+                        Pro
+                      </v-chip>
+                    </div>
                   </div>
-
                   <v-divider class="mb-3" />
-
                   <div class="d-flex align-center justify-space-between mb-2">
                     <span class="text-caption text-medium-emphasis">
                       <v-icon size="small" class="mr-1">mdi-calendar-check</v-icon>
